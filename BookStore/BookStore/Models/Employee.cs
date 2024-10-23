@@ -2,9 +2,14 @@
 {
     public class Employee
     {
-        public int Id { get; set; }             // ID nhân viên
-        public string Name { get; set; }        // Tên nhân viên
-        public string Position { get; set; }    // Chức vụ (Thủ kho, Cửa hàng trưởng, Nhân viên bán hàng)
+        public int EmployeeId { get; set; }
+        public int UserId { get; set; }
+        public string Position { get; set; }  // 'Manager', 'Accountant', 'WarehouseKeeper'
+        public DateTime HireDate { get; set; }
+
+        // Navigation properties
+        public User User { get; set; }  // Liên kết đến bảng Users
     }
+
 
 }

@@ -2,12 +2,17 @@
 {
     public class Order
     {
-        public int Id { get; set; }              // ID đơn hàng
-        public DateTime OrderDate { get; set; }  // Ngày đặt hàng
-        public decimal TotalAmount { get; set; } // Tổng số tiền
-        public int CustomerId { get; set; }      // ID khách hàng
-        public Customer Customer { get; set; }   // Liên kết đến khách hàng
-        public ICollection<OrderDetail> OrderDetails { get; set; } // Chi tiết đơn hàng
+        public int OrderId { get; set; }
+        public int CustomerId { get; set; }
+        public string OrderStatus { get; set; }   // 'Pending', 'Completed', 'Cancelled'
+        public string PaymentStatus { get; set; } // 'Pending', 'Paid', 'Failed'
+        public decimal TotalAmount { get; set; }
+        public DateTime OrderDate { get; set; }
+
+        // Navigation properties
+        public User Customer { get; set; }  // Liên kết đến bảng Users
+        public ICollection<OrderItem> OrderItems { get; set; }
     }
+
 
 }

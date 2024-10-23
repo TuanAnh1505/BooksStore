@@ -2,11 +2,16 @@
 {
     public class User
     {
-        public int Id { get; set; }              // ID người dùng
-        public string Name { get; set; }         // Tên người dùng
-        public string Email { get; set; }        // Email (dùng để đăng nhập)
-        public string Password { get; set; }     // Mật khẩu (cần mã hóa)
-        public string Role { get; set; }         // Vai trò (Customer, Employee)
-        public bool IsActive { get; set; }       // Trạng thái hoạt động của tài khoản
+        public int UserId { get; set; }
+        public string Username { get; set; }
+        public string PasswordHash { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }  // Role có thể là 'Owner', 'Staff', 'Customer', 'Manager', 'Accountant', 'WarehouseKeeper'
+        public DateTime CreatedAt { get; set; }
+
+        // Navigation properties
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<Review> Reviews { get; set; }
     }
+
 }
