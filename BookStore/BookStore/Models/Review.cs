@@ -1,18 +1,23 @@
-﻿namespace ManageBook.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace BookStore.Models;
+
+public partial class Review
 {
-    public class Review
-    {
-        public int ReviewId { get; set; }
-        public int ProductId { get; set; }
-        public int CustomerId { get; set; }
-        public int Rating { get; set; }  // Điểm đánh giá từ 1-5
-        public string ReviewText { get; set; }
-        public DateTime ReviewDate { get; set; }
+    public int ReviewId { get; set; }
 
-        // Navigation properties
-        public Product Product { get; set; }  // Liên kết đến bảng Products
-        public User Customer { get; set; }  // Liên kết đến bảng Users
-    }
+    public int? ProductId { get; set; }
 
+    public int? CustomerId { get; set; }
 
+    public int? Rating { get; set; }
+
+    public string? ReviewText { get; set; }
+
+    public DateTime? ReviewDate { get; set; }
+
+    public virtual User? Customer { get; set; }
+
+    public virtual Product? Product { get; set; }
 }

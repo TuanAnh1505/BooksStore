@@ -1,18 +1,29 @@
-﻿namespace ManageBook.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace BookStore.Models;
+
+public partial class Product
 {
-    public class Product
-    {
-        public int ProductId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        public int StockQuantity { get; set; }
-        public DateTime CreatedAt { get; set; }
+    public int Id { get; set; }
 
-        // Navigation properties
-        public ICollection<Review> Reviews { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; }
-        public ICollection<CategoryProduct> CategoryProducts { get; set; }
-    }
+    public string Name { get; set; } = null!;
 
+    public string? Description { get; set; }
+
+    public decimal Price { get; set; }
+
+    public int StockQuantity { get; set; }
+
+    public string? Category { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public virtual ICollection<CategoriesProduct> CategoriesProducts { get; set; } = new List<CategoriesProduct>();
+
+    public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
+
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

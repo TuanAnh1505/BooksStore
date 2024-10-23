@@ -1,10 +1,13 @@
-﻿namespace ManageBook.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace BookStore.Models;
+
+public partial class Category
 {
-    public class Category
-    {
-        public int Id { get; set; }                  // ID thể loại
-        public string Name { get; set; }             // Tên thể loại
-        public ICollection<Book> Books { get; set; } // Liên kết nhiều sách
-        public ICollection<CategoryProduct> CategoryProducts { get; set; }
-    }
+    public int CategoryId { get; set; }
+
+    public string CategoryName { get; set; } = null!;
+
+    public virtual ICollection<CategoriesProduct> CategoriesProducts { get; set; } = new List<CategoriesProduct>();
 }
