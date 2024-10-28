@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookStore.Models;
 using System.Diagnostics;
+using BookStore.Dtos;
+using Microsoft.Extensions.Hosting;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -15,10 +17,12 @@ namespace BookStore.Areas.Admin.Controllers
     public class ProductsController : Controller
     {
         private readonly BookStoreContext _context;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ProductsController(BookStoreContext context)
+        public ProductsController(BookStoreContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            _hostEnvironment = hostEnvironment;
         }
 
         // GET: Admin/Products
@@ -26,7 +30,10 @@ namespace BookStore.Areas.Admin.Controllers
         [Route("Index")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Products.ToListAsync());
+            var products = await _context.Products
+                .Include(p => p.Category)
+                .ToListAsync();
+            return View(products);
         }
 
         // GET: Admin/Products/Details/5
@@ -49,29 +56,49 @@ namespace BookStore.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products/Create
-        [Route("create")]
-        [HttpGet]
+        [Route("Create")]
         public IActionResult Create()
         {
-            return View();
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            return View(new CreateProductDto());
         }
 
         // POST: Admin/Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Route("create")]
         [HttpPost]
+        [Route("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,Name,Description,Price,StockQuantity,Category,CreatedAt")] Product product)
+        public async Task<IActionResult> Create(CreateProductDto productDto)
         {
             if (ModelState.IsValid)
             {
+                var product = new Product
+                {
+                    Name = productDto.Name,
+                    Description = productDto.Description,
+                    Price = productDto.Price,
+                    StockQuantity = productDto.StockQuantity,
+                    CategoryId = productDto.CategoryId
+                };
+
+                if (productDto.Image != null)
+                {
+                    var filePath = Path.Combine("wwwroot/images", Path.GetFileName(productDto.Image.FileName));
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await productDto.Image.CopyToAsync(stream);
+                    }
+                    product.Image = filePath;
+                }
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", productDto.CategoryId);
+            return View(productDto);
         }
+
 
         // GET: Admin/Products/Edit/5
         [Route("Edit")]
@@ -87,6 +114,8 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -96,38 +125,83 @@ namespace BookStore.Areas.Admin.Controllers
         [Route("Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Description,Price,StockQuantity,Category,CreatedAt")] Product product)
+        public async Task<IActionResult> Edit(int id, EditProductDto productDto)
         {
-            if (id != product.Id)
+            if (id != productDto.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var existingProduct = await _context.Products.FindAsync(id);
+            if (existingProduct == null)
             {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(product);
+
+            if (!ModelState.IsValid)
+            {
+                // Chuyển DTO thành model Product trước khi trả về view
+                var product = new Product
+                {
+                    Id = productDto.Id,
+                    Name = productDto.Name,
+                    Description = productDto.Description,
+                    Price = productDto.Price,
+                    StockQuantity = productDto.StockQuantity,
+                    CategoryId = productDto.CategoryId,
+                    Image = existingProduct.Image // Giữ nguyên ảnh nếu không cập nhật
+                };
+
+                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+                return View(product);
+            }
+
+            // Xử lý upload ảnh mới nếu có
+            if (productDto.Image != null)
+            {
+                var wwwRootPath = _hostEnvironment.WebRootPath;
+                var filePath = Path.Combine(wwwRootPath, "images", Path.GetFileName(productDto.Image.FileName));
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await productDto.Image.CopyToAsync(stream);
+                }
+
+                existingProduct.Image = $"{Path.GetFileName(productDto.Image.FileName)}";
+            }
+
+            // Cập nhật các trường khác
+            existingProduct.Name = productDto.Name;
+            existingProduct.Description = productDto.Description;
+            existingProduct.Price = productDto.Price;
+            existingProduct.StockQuantity = productDto.StockQuantity;
+            existingProduct.CategoryId = productDto.CategoryId;
+
+            try
+            {
+                _context.Update(existingProduct);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Products.Any(e => e.Id == existingProduct.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "The product was updated by another user. Please try again.");
+                    return View(existingProduct);
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
+            
         }
 
         // GET: Admin/Products/Delete/5
         [Route("Delete")]
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,6 +210,7 @@ namespace BookStore.Areas.Admin.Controllers
             }
 
             var product = await _context.Products
+                .Include(p => p.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -145,12 +220,12 @@ namespace BookStore.Areas.Admin.Controllers
             return View(product);
         }
 
-        // POST: Admin/Products/Delete/5
+        // POST: Admin/ProductAdmin/Delete/5
         [Route("Delete")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        { 
+        {
             var product = await _context.Products.FindAsync(id);
             if (product != null)
             {

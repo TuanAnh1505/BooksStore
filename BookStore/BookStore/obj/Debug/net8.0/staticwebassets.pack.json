@@ -521,6 +521,46 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\1984.jpg",
+      "PackagePath": "staticwebassets\\images\\1984.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\A Brief History of Humankind.jpg",
+      "PackagePath": "staticwebassets\\images\\A Brief History of Humankind.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\Atomic Habits.jpg",
+      "PackagePath": "staticwebassets\\images\\Atomic Habits.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\Clean Code.jpg",
+      "PackagePath": "staticwebassets\\images\\Clean Code.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\IPHONE.jpg",
+      "PackagePath": "staticwebassets\\images\\IPHONE.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\Khoai tây chiên size lớn.png",
+      "PackagePath": "staticwebassets\\images\\Khoai tây chiên size lớn.png"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\The Great Gatsby.jpg",
+      "PackagePath": "staticwebassets\\images\\The Great Gatsby.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\The Pragmatic Programmer.jpg",
+      "PackagePath": "staticwebassets\\images\\The Pragmatic Programmer.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\Thinking Fast and Slow.jpg",
+      "PackagePath": "staticwebassets\\images\\Thinking Fast and Slow.jpg"
+    },
+    {
+      "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\To Kill a Mockingbird.jpg",
+      "PackagePath": "staticwebassets\\images\\To Kill a Mockingbird.jpg"
+    },
+    {
       "Id": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

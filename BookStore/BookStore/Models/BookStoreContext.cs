@@ -15,7 +15,7 @@ public partial class BookStoreContext : DbContext
     {
     }
 
-    public virtual DbSet<CategoriesProduct> CategoriesProducts { get; set; }
+
 
     public virtual DbSet<Category> Categories { get; set; }
 
@@ -44,35 +44,18 @@ public partial class BookStoreContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<CategoriesProduct>(entity =>
-        {
-            entity.HasKey(e => e.CategoryProductId).HasName("PK__categori__06FDB334CE9C2FF6");
-
-            entity.ToTable("categories_products");
-
-            entity.Property(e => e.CategoryProductId).HasColumnName("category_product_id");
-            entity.Property(e => e.CategoryId).HasColumnName("category_id");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
-
-            entity.HasOne(d => d.Category).WithMany(p => p.CategoriesProducts)
-                .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("FK_CategoriesProducts_Categories");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.CategoriesProducts)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_CategoriesProducts_Products");
-        });
+        
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__categori__D54EE9B4D2F98205");
+            entity.HasKey(e => e.Id).HasName("PK__categori__D54EE9B4D2F98205");
 
             entity.ToTable("categories");
 
-            entity.HasIndex(e => e.CategoryName, "UQ__categori__5189E255A581E73D").IsUnique();
+            entity.HasIndex(e => e.Name, "UQ__categori__5189E255A581E73D").IsUnique();
 
-            entity.Property(e => e.CategoryId).HasColumnName("category_id");
-            entity.Property(e => e.CategoryName)
+            entity.Property(e => e.Id).HasColumnName("category_id");
+            entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("category_name");
@@ -198,7 +181,7 @@ public partial class BookStoreContext : DbContext
             entity.ToTable("products");
 
             entity.Property(e => e.Id).HasColumnName("product_id");
-            entity.Property(e => e.Category)
+            entity.Property(e => e.CategoryId)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("category");

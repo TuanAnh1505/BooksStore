@@ -1,0 +1,22 @@
+﻿@model BookStore.Models.Product
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="container mt-5">
+    <div class="row" style="margin-top:20vh;">
+        <div class="col-md-6 text-end">
+            <img src="~/images/@Model.Image" alt="@Model.Name" class="img-fluid rounded" style="width: 100%; height: 400px; object-fit: contain;" />
+        </div>
+        <div class="col-md-6" style="margin-top:5vh;">
+            <h2 style="">@Model.Name</h2>
+            <p><strong>Description:</strong> @Model.Description</p>
+            <p style="margin-top:10px;"><strong>Price:</strong> $@Model.Price</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Products</a>
+            <a asp-controller="Home" asp-action="AddToCart" asp-route-id="@Model.Id" class="btn btn-primary">Add to Cart</a>
+        </div>
+    </div>
+</div>

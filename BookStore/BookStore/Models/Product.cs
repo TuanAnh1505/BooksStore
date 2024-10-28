@@ -9,17 +9,19 @@ public partial class Product
 
     public string Name { get; set; } = null!;
 
+    public string Image { get; set; }
+
     public string? Description { get; set; }
 
     public decimal Price { get; set; }
 
     public int StockQuantity { get; set; }
 
-    public string? Category { get; set; }
+    public int CategoryId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
-    public virtual ICollection<CategoriesProduct> CategoriesProducts { get; set; } = new List<CategoriesProduct>();
+    public Category Category { get; set; }
 
     public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
 

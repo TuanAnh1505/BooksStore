@@ -1,0 +1,50 @@
+﻿@model IEnumerable<BookStore.Models.Category>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Index</h1>
+
+<p class="text-end">
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</p>
+<table class="table table-success">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var rowIndex = 0; // Track row index
+        }
+        @foreach (var item in Model)
+        {
+            // Toggle between light primary and success colors
+            var rowClass = rowIndex % 2 == 0 ? "table-primary" : "table-success";
+            rowIndex++;
+
+            <tr class="@rowClass">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td class="text-center" style="max-width:50px;">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                        <i class="fas fa-info-circle"></i>
+                    </a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,8 +1,30 @@
-﻿@{
+﻿@model IEnumerable<BookStore.Models.Product>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-md-4 mb-4" style="max-height: 700px; overflow: hidden;">
+            <div class="card" style="max-width: 350px;">
+                <img src="~/images/@product.Image"
+                     class="card-img-top"
+                     alt="@product.Name"
+                     style="width: 100%; height: 300px; object-fit: contain;" />
+
+                <br />
+                <div class="card-body">
+                    <h6 class="card-title"><strong>@product.Name</strong></h6>
+                    <p class="description-cell" style="max-width: 290px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@product.Description</p>
+                    @* <p class="description-cell card-text" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@book.</p> *@
+                    <p><strong>Price:  $  </strong>@product.Price</p>
+
+                    <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="btn btn-success">View Details</a>
+
+                    <a asp-controller="Home" asp-action="AddToCart" asp-route-id="@product.Id" class="btn btn-primary">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    }

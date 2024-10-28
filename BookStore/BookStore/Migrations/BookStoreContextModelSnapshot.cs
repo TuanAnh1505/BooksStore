@@ -22,53 +22,26 @@ namespace BookStore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BookStore.Models.CategoriesProduct", b =>
-                {
-                    b.Property<int>("CategoryProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("category_product_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryProductId"));
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int")
-                        .HasColumnName("category_id");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("product_id");
-
-                    b.HasKey("CategoryProductId")
-                        .HasName("PK__categori__06FDB334CE9C2FF6");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("categories_products", (string)null);
-                });
-
             modelBuilder.Entity("BookStore.Models.Category", b =>
                 {
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("category_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CategoryName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("category_name");
 
-                    b.HasKey("CategoryId")
+                    b.HasKey("Id")
                         .HasName("PK__categori__D54EE9B4D2F98205");
 
-                    b.HasIndex(new[] { "CategoryName" }, "UQ__categori__5189E255A581E73D")
+                    b.HasIndex(new[] { "Name" }, "UQ__categori__5189E255A581E73D")
                         .IsUnique();
 
                     b.ToTable("categories", (string)null);
@@ -260,10 +233,10 @@ namespace BookStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Category")
+                    b.Property<int>("CategoryId")
                         .HasMaxLength(100)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("int")
                         .HasColumnName("category");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -275,6 +248,10 @@ namespace BookStore.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text")
                         .HasColumnName("description");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -293,6 +270,8 @@ namespace BookStore.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK__products__47027DF5829362B9");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("products", (string)null);
                 });
@@ -393,23 +372,6 @@ namespace BookStore.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("BookStore.Models.CategoriesProduct", b =>
-                {
-                    b.HasOne("BookStore.Models.Category", "Category")
-                        .WithMany("CategoriesProducts")
-                        .HasForeignKey("CategoryId")
-                        .HasConstraintName("FK_CategoriesProducts_Categories");
-
-                    b.HasOne("BookStore.Models.Product", "Product")
-                        .WithMany("CategoriesProducts")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_CategoriesProducts_Products");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("BookStore.Models.Employee", b =>
                 {
                     b.HasOne("BookStore.Models.User", "User")
@@ -457,6 +419,17 @@ namespace BookStore.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("BookStore.Models.Product", b =>
+                {
+                    b.HasOne("BookStore.Models.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("BookStore.Models.Review", b =>
                 {
                     b.HasOne("BookStore.Models.User", "Customer")
@@ -476,7 +449,7 @@ namespace BookStore.Migrations
 
             modelBuilder.Entity("BookStore.Models.Category", b =>
                 {
-                    b.Navigation("CategoriesProducts");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("BookStore.Models.Order", b =>
@@ -486,8 +459,6 @@ namespace BookStore.Migrations
 
             modelBuilder.Entity("BookStore.Models.Product", b =>
                 {
-                    b.Navigation("CategoriesProducts");
-
                     b.Navigation("Inventories");
 
                     b.Navigation("OrderItems");

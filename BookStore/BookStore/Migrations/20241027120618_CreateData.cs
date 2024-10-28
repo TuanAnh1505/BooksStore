@@ -40,24 +40,6 @@ namespace BookStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "products",
-                columns: table => new
-                {
-                    product_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    stock_quantity = table.Column<int>(type: "int", nullable: false),
-                    category = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
-                    created_at = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__products__47027DF5829362B9", x => x.product_id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -75,47 +57,28 @@ namespace BookStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "categories_products",
+                name: "products",
                 columns: table => new
                 {
-                    category_product_id = table.Column<int>(type: "int", nullable: false)
+                    product_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    product_id = table.Column<int>(type: "int", nullable: true),
-                    category_id = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__categori__06FDB334CE9C2FF6", x => x.category_product_id);
-                    table.ForeignKey(
-                        name: "FK_CategoriesProducts_Categories",
-                        column: x => x.category_id,
-                        principalTable: "categories",
-                        principalColumn: "category_id");
-                    table.ForeignKey(
-                        name: "FK_CategoriesProducts_Products",
-                        column: x => x.product_id,
-                        principalTable: "products",
-                        principalColumn: "product_id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "inventory",
-                columns: table => new
-                {
-                    inventory_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    product_id = table.Column<int>(type: "int", nullable: true),
+                    name = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     stock_quantity = table.Column<int>(type: "int", nullable: false),
-                    last_update = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
+                    category = table.Column<int>(type: "int", unicode: false, maxLength: 100, nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__inventor__B59ACC49D55E92F3", x => x.inventory_id);
+                    table.PrimaryKey("PK__products__47027DF5829362B9", x => x.product_id);
                     table.ForeignKey(
-                        name: "FK_Inventory_Products",
-                        column: x => x.product_id,
-                        principalTable: "products",
-                        principalColumn: "product_id");
+                        name: "FK_products_categories_category",
+                        column: x => x.category,
+                        principalTable: "categories",
+                        principalColumn: "category_id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,6 +121,26 @@ namespace BookStore.Migrations
                         column: x => x.customer_id,
                         principalTable: "users",
                         principalColumn: "user_id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "inventory",
+                columns: table => new
+                {
+                    inventory_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    product_id = table.Column<int>(type: "int", nullable: true),
+                    stock_quantity = table.Column<int>(type: "int", nullable: false),
+                    last_update = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__inventor__B59ACC49D55E92F3", x => x.inventory_id);
+                    table.ForeignKey(
+                        name: "FK_Inventory_Products",
+                        column: x => x.product_id,
+                        principalTable: "products",
+                        principalColumn: "product_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -220,16 +203,6 @@ namespace BookStore.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_categories_products_category_id",
-                table: "categories_products",
-                column: "category_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_categories_products_product_id",
-                table: "categories_products",
-                column: "product_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_employees_user_id",
                 table: "employees",
                 column: "user_id");
@@ -253,6 +226,11 @@ namespace BookStore.Migrations
                 name: "IX_orders_customer_id",
                 table: "orders",
                 column: "customer_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_products_category",
+                table: "products",
+                column: "category");
 
             migrationBuilder.CreateIndex(
                 name: "IX_reviews_customer_id",
@@ -281,9 +259,6 @@ namespace BookStore.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "categories_products");
-
-            migrationBuilder.DropTable(
                 name: "employees");
 
             migrationBuilder.DropTable(
@@ -299,9 +274,6 @@ namespace BookStore.Migrations
                 name: "reviews");
 
             migrationBuilder.DropTable(
-                name: "categories");
-
-            migrationBuilder.DropTable(
                 name: "orders");
 
             migrationBuilder.DropTable(
@@ -309,6 +281,9 @@ namespace BookStore.Migrations
 
             migrationBuilder.DropTable(
                 name: "users");
+
+            migrationBuilder.DropTable(
+                name: "categories");
         }
     }
 }
