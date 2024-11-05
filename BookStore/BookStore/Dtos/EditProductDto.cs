@@ -14,11 +14,14 @@ namespace BookStore.Dtos
         [Required]
         public string Description { get; set; }
 
+        [Required]
+        public string? Describe { get; set; }
+
         [Range(0, double.MaxValue)]
         public decimal Price { get; set; }
 
         [Range(0, int.MaxValue)]
-        public int StockQuantity { get; set; }
+        public int ComputedStockQuantity { get; set; }
 
         [Required]
         public int CategoryId { get; set; }

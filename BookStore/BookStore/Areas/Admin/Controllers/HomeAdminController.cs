@@ -11,6 +11,11 @@ namespace BookStore.Areas.Admin.Controllers
         [Route("index")]
         public IActionResult Index()
         {
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account"); // Redirect to login if user is not authenticated
+            }
             return View();
         }
     }

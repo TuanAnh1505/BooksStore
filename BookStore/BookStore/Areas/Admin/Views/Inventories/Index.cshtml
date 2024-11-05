@@ -1,0 +1,77 @@
+﻿@using BookStore.Models;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<Inventory>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Index</h1>
+
+<p class="text-end">
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</p>
+
+<table class="table table-success">
+    <thead>
+        <tr>
+            <th>
+                Product
+            </th>
+            <th>
+                StockQuantity
+            </th>
+            <th>
+                LastUpdate
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var rowIndex = 0; // Track row index
+        }
+        @foreach (var item in Model)
+        {
+            // Toggle between light primary and success colors
+            var rowClass = rowIndex % 2 == 0 ? "table-primary" : "table-success";
+            rowIndex++;
+
+            <tr class="@rowClass">
+            <td>
+                @Html.DisplayFor(modelItem => item.StockQuantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastUpdate)
+            </td>
+            
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                        <i class="fas fa-info-circle"></i>
+                    </a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div style="margin-top: 5vh;">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
+{
+    LiElementClasses = new List<string> { "page-item" },
+    PageClasses = new List<string> { "page-link" }
+})
+</div>

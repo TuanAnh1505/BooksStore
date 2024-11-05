@@ -1,10 +1,9 @@
 ﻿@model BookStore.Models.Product
+
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
 
 <div class="container mt-5">
     <div class="row" style="margin-top:20vh;">
@@ -15,8 +14,32 @@
             <h2 style="">@Model.Name</h2>
             <p><strong>Description:</strong> @Model.Description</p>
             <p style="margin-top:10px;"><strong>Price:</strong> $@Model.Price</p>
-            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Products</a>
-            <a asp-controller="Home" asp-action="AddToCart" asp-route-id="@Model.Id" class="btn btn-primary">Add to Cart</a>
+            <p>
+                <div class="inventory-info" style="display: flex; align-items: center;">
+                    <strong style="margin-right: 10px;">Quantity Remaining:</strong>
+                    <ul style="list-style-type: none; padding-left: 0; margin: 0;">
+                        @if (Model.Inventories != null && Model.Inventories.Any())
+                        {
+                            foreach (var inventory in Model.Inventories)
+                            {
+                                <li>@inventory.StockQuantity</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No inventory data available.</li>
+                        }
+                    </ul>
+                </div>
+            </p>
+
+            <div style="display: flex; align-items: center; justify-content: flex-start;">
+                <form asp-controller="Order" asp-action="AddToCart" method="post" style="margin-bottom: 0;">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                </form> |
+                <a asp-controller="Home" asp-action="Index" class="btn btn-dark">Back to Products</a>
+            </div>
         </div>
     </div>
 </div>

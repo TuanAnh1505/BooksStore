@@ -39,12 +39,12 @@ public partial class BookStoreContext : DbContext
     {
         base.OnConfiguring(optionsBuilder);
     }
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-MT3BHB0\\SQLEXPRESS01;Initial Catalog=BookStore;Integrated Security=True;Trust Server Certificate=True");
+    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+    //        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-MT3BHB0\\SQLEXPRESS01;Initial Catalog=BookStore;Integrated Security=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+
 
         modelBuilder.Entity<Category>(entity =>
         {
@@ -105,11 +105,11 @@ public partial class BookStoreContext : DbContext
 
         modelBuilder.Entity<Inventory>(entity =>
         {
-            entity.HasKey(e => e.InventoryId).HasName("PK__inventor__B59ACC49D55E92F3");
+            entity.HasKey(e => e.Id).HasName("PK__inventor__B59ACC49D55E92F3");
 
             entity.ToTable("inventory");
 
-            entity.Property(e => e.InventoryId).HasColumnName("inventory_id");
+            entity.Property(e => e.Id).HasColumnName("inventory_id");
             entity.Property(e => e.LastUpdate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -124,12 +124,12 @@ public partial class BookStoreContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__orders__46596229B787213D");
+            entity.HasKey(e => e.Id).HasName("PK__orders__46596229B787213D");
 
             entity.ToTable("orders");
 
-            entity.Property(e => e.OrderId).HasColumnName("order_id");
-            entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.Id).HasColumnName("order_id");
+            
             entity.Property(e => e.OrderDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -146,32 +146,25 @@ public partial class BookStoreContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("total_amount");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK_Orders_Users");
+            
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.HasKey(e => e.OrderItemId).HasName("PK__order_it__3764B6BC8F5CA1BB");
+            entity.HasKey(e => e.Id).HasName("PK__order_it__3764B6BC8F5CA1BB");
 
             entity.ToTable("order_items");
 
-            entity.Property(e => e.OrderItemId).HasColumnName("order_item_id");
+            entity.Property(e => e.Id).HasColumnName("order_item_id");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
-            entity.Property(e => e.Price)
-                .HasColumnType("decimal(10, 2)")
-                .HasColumnName("price");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            
+            
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("FK_OrderItems_Orders");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.OrderItems)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_OrderItems_Products");
+           
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -190,16 +183,19 @@ public partial class BookStoreContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.Description)
-                .HasColumnType("text")
+                .HasColumnType("nvarchar(4000)")
                 .HasColumnName("description");
+            entity.Property(e => e.Describe)
+                .HasColumnType("nvarchar(4000)")
+                .HasColumnName("describe");
             entity.Property(e => e.Name)
-                .HasMaxLength(255)
+                .HasColumnType("nvarchar(255)")
                 .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Price)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("price");
-            entity.Property(e => e.StockQuantity).HasColumnName("stock_quantity");
+            
         });
 
         modelBuilder.Entity<Review>(entity =>
@@ -231,7 +227,7 @@ public partial class BookStoreContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__users__B9BE370F46C87A7C");
+            entity.HasKey(e => e.Id).HasName("PK__users__B9BE370F46C87A7C");
 
             entity.ToTable("users");
 
@@ -239,7 +235,7 @@ public partial class BookStoreContext : DbContext
 
             entity.HasIndex(e => e.Username, "UQ__users__F3DBC5721F4F3F96").IsUnique();
 
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Id).HasColumnName("user_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -260,12 +256,25 @@ public partial class BookStoreContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("username");
+            entity.Property(e => e.Phone)
+                .HasMaxLength(15)
+                .IsUnicode(false)
+                .HasColumnName("phone");
+            entity.Property(e => e.Address)
+                .HasColumnType("nvarchar(256)")
+                .IsUnicode(false)
+                .HasColumnName("address");
         });
 
         OnModelCreatingPartial(modelBuilder);
     }
+    internal void Error(Exception ex, string v, string message)
+    {
+        // Implement your error logging or handling logic here
+        Console.WriteLine($"Error: {message}, Exception: {ex.Message}");
+        // Optionally, you could throw the exception again or log it to a file, etc.
+    }
 
-   
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

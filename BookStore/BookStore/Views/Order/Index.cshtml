@@ -1,0 +1,76 @@
+﻿    @model IEnumerable<BookStore.Models.Order>
+    @{
+        ViewData["Title"] = "Your Orders";
+    }
+
+    <h2>Your Orders</h2>
+
+    <!-- Display empty cart message if available -->
+    @if (ViewData["Message"] != null)
+    {
+        <div class="alert alert-info">@ViewData["Message"]</div>
+    }
+    else
+    {
+        <!-- Display orders in a table -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">Image</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="~/images/@order.Product.Image"
+                                 class="card-img-top"
+                                 alt="@order.Product.Name"
+                                 style="width: 100%; height: 50px; object-fit: contain;" />
+                        </td>
+                        <td class="description-cell" style="max-width: 290px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@order.Product.Name</td>
+                        <td> $. @(order.Product.Price) </td>
+                        <td>
+                            <form asp-action="Update" method="post">
+                                <input type="hidden" name="id" value="@order.Id" />
+                                <input type="number" name="quantity" value="@order.Quantity" min="1" style="width: 60px;" />
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i></button>
+                            </form>
+                        </td>
+
+                        <td>@String.Format("{0:C}", order.TotalAmount)</td>
+
+                        <td>
+                        
+                            <form asp-action="Remove" asp-route-id="@order.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                        <td>@String.Format("{0:C}", Model.Sum(o => o.TotalAmount))</td>
+                    </tr>
+                </tfoot>
+            </tbody>
+        
+    </table>
+    }
+
+
+
+    <div style="display: flex; align-items: center; justify-content: flex-start;">
+        <form asp-controller="Order" asp-action="Checkout" method="post">
+            <button type="submit" class="btn btn-success">Checkout</button>
+        </form> |
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-dark">Back to List</a>
+    </div>

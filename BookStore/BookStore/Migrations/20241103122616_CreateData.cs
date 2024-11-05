@@ -48,6 +48,8 @@ namespace BookStore.Migrations
                     username = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     password_hash = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
                     email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    phone = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: false),
+                    address = table.Column<string>(type: "nvarchar(256)", unicode: false, maxLength: 256, nullable: false),
                     role = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
                 },
@@ -102,28 +104,6 @@ namespace BookStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "orders",
-                columns: table => new
-                {
-                    order_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    customer_id = table.Column<int>(type: "int", nullable: true),
-                    order_status = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    payment_status = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    total_amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    order_date = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__orders__46596229B787213D", x => x.order_id);
-                    table.ForeignKey(
-                        name: "FK_Orders_Users",
-                        column: x => x.customer_id,
-                        principalTable: "users",
-                        principalColumn: "user_id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "inventory",
                 columns: table => new
                 {
@@ -141,6 +121,37 @@ namespace BookStore.Migrations
                         column: x => x.product_id,
                         principalTable: "products",
                         principalColumn: "product_id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "orders",
+                columns: table => new
+                {
+                    order_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    order_status = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
+                    payment_status = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    total_amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    order_date = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId1 = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__orders__46596229B787213D", x => x.order_id);
+                    table.ForeignKey(
+                        name: "FK_orders_products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "products",
+                        principalColumn: "product_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_orders_users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "users",
+                        principalColumn: "user_id");
                 });
 
             migrationBuilder.CreateTable(
@@ -177,9 +188,7 @@ namespace BookStore.Migrations
                     order_item_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     order_id = table.Column<int>(type: "int", nullable: true),
-                    product_id = table.Column<int>(type: "int", nullable: true),
-                    quantity = table.Column<int>(type: "int", nullable: false),
-                    price = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                    ProductId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -190,8 +199,8 @@ namespace BookStore.Migrations
                         principalTable: "orders",
                         principalColumn: "order_id");
                     table.ForeignKey(
-                        name: "FK_OrderItems_Products",
-                        column: x => x.product_id,
+                        name: "FK_order_items_products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "products",
                         principalColumn: "product_id");
                 });
@@ -218,14 +227,19 @@ namespace BookStore.Migrations
                 column: "order_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_order_items_product_id",
+                name: "IX_order_items_ProductId",
                 table: "order_items",
-                column: "product_id");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_orders_customer_id",
+                name: "IX_orders_ProductId",
                 table: "orders",
-                column: "customer_id");
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_orders_UserId1",
+                table: "orders",
+                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_products_category",

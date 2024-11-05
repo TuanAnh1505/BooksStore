@@ -1,9 +1,15 @@
-﻿@model IEnumerable<BookStore.Models.Product>
+﻿@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<Product>
 
 @{
     ViewData["Title"] = "Home Page";
 }
-
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
 <div class="row">
     @foreach (var product in Model)
     {
@@ -21,10 +27,24 @@
                     @* <p class="description-cell card-text" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@book.</p> *@
                     <p><strong>Price:  $  </strong>@product.Price</p>
 
-                    <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="btn btn-success">View Details</a>
+                    <div style="display: flex; align-items: center; justify-content: flex-start;">
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="btn btn-success" style="margin-right: 5px;">View Details</a>
 
-                    <a asp-controller="Home" asp-action="AddToCart" asp-route-id="@product.Id" class="btn btn-primary">Add to Cart</a>
+                        <form asp-controller="Order" asp-action="AddToCart" method="post" style="margin-bottom: 0;">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     }
+</div>
+
+<div class="product__pagination">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
+{
+    LiElementClasses = new List<string> { "page-item" },
+    PageClasses = new List<string> { "page-link" }
+})
+</div>

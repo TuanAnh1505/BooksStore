@@ -1,6 +1,9 @@
-using BookStore.Models;
+﻿using BookStore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
+using X.PagedList;
 
 namespace BookStore.Controllers
 {
@@ -13,105 +16,66 @@ namespace BookStore.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? page)
         {
+            int pageSize = 3;
+            int pageNumber = page == null || page < 0 ? 1 : page.Value;
             var products = _context.Products.ToList();
-            return View(products);
+            PagedList<Product> product = new PagedList<Product>(products, pageNumber, pageSize);
+            return View(product);
         }
+
+
+        //public IActionResult Details(int id)
+        //{
+        //    var product = _context.Products
+        //        .Include(p => p.Category)
+        //        .Include(p => p.Inventories)
+        //        .SingleOrDefault(p => p.Id == id);
+        //    if (product == null)
+        //    {
+        //        TempData["Message"] = $"Không th?y s?n ph?m có mã {id}";
+        //        return Redirect("/404");
+        //    }
+        //    var result = new Product
+        //    {
+        //        Id = product.Id,
+        //        Name = product.Name,
+
+        //        Description = product.Description,
+        //        Price = (int)product.Price,
+        //        Image = product.Image,
+        //        CategoryId = product.CategoryId,
+        //    };
+        //    return View(result);
+        //}
 
         public IActionResult Details(int id)
         {
-            var product = _context.Products.SingleOrDefault(p => p.Id == id);
+            var product = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Inventories)
+                .SingleOrDefault(p => p.Id == id);
+
             if (product == null)
             {
-                TempData["Message"] = $"Kh�ng th?y s?n ph?m c� m� {id}";
+                TempData["Message"] = $"Không thấy sản phẩm có mã {id}";
                 return Redirect("/404");
             }
-            var result = new Product
-            {
-                Id = product.Id,
-                Name = product.Name,
-                StockQuantity = product.StockQuantity,
-                Description = product.Description,
-                Price = (int)product.Price,
-                Image = product.Image,
-                CategoryId = product.CategoryId,
-            };
-            return View(result);
+
+            // Debugging information
+            var inventoryCount = product.Inventories?.Count() ?? 0; // Get the count of inventories
+            Console.WriteLine($"Inventory Count: {inventoryCount}"); // Log or break here to check
+
+            return View(product);
         }
 
 
-
-
-
-        // Add to Cart functionality
-        public IActionResult AddToCart(int id)
-        {
-            var product = _context.Products.SingleOrDefault(p => p.Id == id);
-            if (product == null) return RedirectToAction("Index");
-
-            // Retrieve existing cart from session or create a new one
-            var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
-
-            // Check if product already exists in cart
-            var existingProduct = cart.FirstOrDefault(p => p.Id == id);
-            if (existingProduct != null)
-            {
-                existingProduct.StockQuantity++; // Increment quantity if already in cart
-            }
-            else
-            {
-                // Clone the product to avoid modifying the original product
-                var productToAdd = new Product
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Price = product.Price,
-                    Image = product.Image,
-                    Description = product.Description,
-                    StockQuantity = 1 // Add product with quantity 1
-                };
-                cart.Add(productToAdd);
-            }
-
-            // Save updated cart back to session
-            HttpContext.Session.SetObjectAsJson("Cart", cart);
-
-            return RedirectToAction("Carts");
-        }
-
-        public IActionResult Carts()
-        {
-            // Retrieve cart from session
-            var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
-            return View(cart);
-        }
-
-        [HttpPost]
-        public IActionResult UpdateCart(Dictionary<int, int> quantities)
-        {
-            // Retrieve cart from session
-            var cart = HttpContext.Session.GetObjectFromJson<List<Product>>("Cart") ?? new List<Product>();
-
-            foreach (var item in cart)
-            {
-                if (quantities.ContainsKey(item.Id))
-                {
-                    item.StockQuantity = quantities[item.Id]; // Update quantity based on user input
-                }
-            }
-
-            // Save updated cart back to session
-            HttpContext.Session.SetObjectAsJson("Cart", cart);
-
-            return RedirectToAction("Carts");
-        }
-
-
-        public IActionResult NotFound()
+        public IActionResult NotFoundPage()
         {
             ViewBag.Message = TempData["Message"];
             return View();
         }
+
     }
 }

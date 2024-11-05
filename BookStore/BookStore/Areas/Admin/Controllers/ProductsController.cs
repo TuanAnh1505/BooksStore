@@ -9,6 +9,8 @@ using BookStore.Models;
 using System.Diagnostics;
 using BookStore.Dtos;
 using Microsoft.Extensions.Hosting;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace BookStore.Areas.Admin.Controllers
 {
@@ -28,13 +30,18 @@ namespace BookStore.Areas.Admin.Controllers
         // GET: Admin/Products
         [Route("")]
         [Route("Index")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
-            var products = await _context.Products
-                .Include(p => p.Category)
-                .ToListAsync();
-            return View(products);
+            int pageSize = 4;
+            int pageNumber = page == null || page < 0 ? 1 : page.Value;
+            var products = _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Inventories)
+            .ToPagedList();
+            PagedList<Product> product = new PagedList<Product>(products, pageNumber, pageSize);
+            return View(product);
         }
+        
 
         // GET: Admin/Products/Details/5
         [Route("Details")]
@@ -46,6 +53,8 @@ namespace BookStore.Areas.Admin.Controllers
             }
 
             var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Inventories)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -76,7 +85,7 @@ namespace BookStore.Areas.Admin.Controllers
                     Name = productDto.Name,
                     Description = productDto.Description,
                     Price = productDto.Price,
-                    StockQuantity = productDto.StockQuantity,
+                    Describe = productDto.Describe,
                     CategoryId = productDto.CategoryId
                 };
 
@@ -147,7 +156,7 @@ namespace BookStore.Areas.Admin.Controllers
                     Name = productDto.Name,
                     Description = productDto.Description,
                     Price = productDto.Price,
-                    StockQuantity = productDto.StockQuantity,
+                    Describe = productDto.Describe,
                     CategoryId = productDto.CategoryId,
                     Image = existingProduct.Image // Giữ nguyên ảnh nếu không cập nhật
                 };
@@ -174,7 +183,7 @@ namespace BookStore.Areas.Admin.Controllers
             existingProduct.Name = productDto.Name;
             existingProduct.Description = productDto.Description;
             existingProduct.Price = productDto.Price;
-            existingProduct.StockQuantity = productDto.StockQuantity;
+            existingProduct.Describe = productDto.Describe;
             existingProduct.CategoryId = productDto.CategoryId;
 
             try
@@ -211,6 +220,7 @@ namespace BookStore.Areas.Admin.Controllers
 
             var product = await _context.Products
                 .Include(p => p.Category)
+                .Include(p => p.Inventories)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {

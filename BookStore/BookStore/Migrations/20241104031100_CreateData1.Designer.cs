@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStore.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    [Migration("20241027120618_CreateData")]
-    partial class CreateData
+    [Migration("20241104031100_CreateData1")]
+    partial class CreateData1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,12 +118,12 @@ namespace BookStore.Migrations
 
             modelBuilder.Entity("BookStore.Models.Inventory", b =>
                 {
-                    b.Property<int>("InventoryId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("inventory_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InventoryId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("LastUpdate")
                         .ValueGeneratedOnAdd()
@@ -139,7 +139,7 @@ namespace BookStore.Migrations
                         .HasColumnType("int")
                         .HasColumnName("stock_quantity");
 
-                    b.HasKey("InventoryId")
+                    b.HasKey("Id")
                         .HasName("PK__inventor__B59ACC49D55E92F3");
 
                     b.HasIndex("ProductId");
@@ -149,16 +149,12 @@ namespace BookStore.Migrations
 
             modelBuilder.Entity("BookStore.Models.Order", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("order_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int")
-                        .HasColumnName("customer_id");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("OrderDate")
                         .ValueGeneratedOnAdd()
@@ -180,44 +176,50 @@ namespace BookStore.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("payment_status");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10, 2)")
                         .HasColumnName("total_amount");
 
-                    b.HasKey("OrderId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
                         .HasName("PK__orders__46596229B787213D");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("orders", (string)null);
                 });
 
             modelBuilder.Entity("BookStore.Models.OrderItem", b =>
                 {
-                    b.Property<int>("OrderItemId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("order_item_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int")
                         .HasColumnName("order_id");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10, 2)")
-                        .HasColumnName("price");
-
                     b.Property<int?>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("product_id");
+                        .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int")
-                        .HasColumnName("quantity");
-
-                    b.HasKey("OrderItemId")
+                    b.HasKey("Id")
                         .HasName("PK__order_it__3764B6BC8F5CA1BB");
 
                     b.HasIndex("OrderId");
@@ -266,10 +268,6 @@ namespace BookStore.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10, 2)")
                         .HasColumnName("price");
-
-                    b.Property<int>("StockQuantity")
-                        .HasColumnType("int")
-                        .HasColumnName("stock_quantity");
 
                     b.HasKey("Id")
                         .HasName("PK__products__47027DF5829362B9");
@@ -322,12 +320,19 @@ namespace BookStore.Migrations
 
             modelBuilder.Entity("BookStore.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .IsUnicode(false)
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnName("address");
 
                     b.Property<DateTime?>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -349,6 +354,13 @@ namespace BookStore.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("password_hash");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(15)")
+                        .HasColumnName("phone");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -363,7 +375,7 @@ namespace BookStore.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("username");
 
-                    b.HasKey("UserId")
+                    b.HasKey("Id")
                         .HasName("PK__users__B9BE370F46C87A7C");
 
                     b.HasIndex(new[] { "Email" }, "UQ__users__AB6E616486C708B0")
@@ -397,12 +409,17 @@ namespace BookStore.Migrations
 
             modelBuilder.Entity("BookStore.Models.Order", b =>
                 {
-                    b.HasOne("BookStore.Models.User", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("FK_Orders_Users");
+                    b.HasOne("BookStore.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.HasOne("BookStore.Models.User", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BookStore.Models.OrderItem", b =>
@@ -412,14 +429,11 @@ namespace BookStore.Migrations
                         .HasForeignKey("OrderId")
                         .HasConstraintName("FK_OrderItems_Orders");
 
-                    b.HasOne("BookStore.Models.Product", "Product")
+                    b.HasOne("BookStore.Models.Product", null)
                         .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("FK_OrderItems_Products");
+                        .HasForeignKey("ProductId");
 
                     b.Navigation("Order");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BookStore.Models.Product", b =>
