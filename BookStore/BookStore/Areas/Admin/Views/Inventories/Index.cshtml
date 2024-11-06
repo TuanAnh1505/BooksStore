@@ -20,10 +20,10 @@
     <thead>
         <tr>
             <th>
-                Product
+                StockQuantity
             </th>
             <th>
-                StockQuantity
+                Product
             </th>
             <th>
                 LastUpdate
@@ -43,10 +43,10 @@
 
             <tr class="@rowClass">
             <td>
-                @Html.DisplayFor(modelItem => item.StockQuantity)
+                @Html.DisplayFor(modelItem => item.Product.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Product.Name)
+                @Html.DisplayFor(modelItem => item.StockQuantity)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LastUpdate)

@@ -106,7 +106,6 @@ public partial class BookStoreContext : DbContext
         modelBuilder.Entity<Inventory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__inventor__B59ACC49D55E92F3");
-
             entity.ToTable("inventory");
 
             entity.Property(e => e.Id).HasColumnName("inventory_id");
@@ -116,10 +115,6 @@ public partial class BookStoreContext : DbContext
                 .HasColumnName("last_update");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.StockQuantity).HasColumnName("stock_quantity");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.Inventories)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_Inventory_Products");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -146,26 +141,42 @@ public partial class BookStoreContext : DbContext
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("total_amount");
 
-            
+           
+
         });
+
+        //modelBuilder.Entity<OrderItem>(entity =>
+        //{
+        //    entity.HasKey(e => e.Id).HasName("PK__order_it__3764B6BC8F5CA1BB");
+
+        //    entity.ToTable("order_items");
+
+        //    entity.Property(e => e.Id).HasColumnName("order_item_id");
+        //    entity.Property(e => e.OrderId).HasColumnName("order_id");
+
+
+
+        //    entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
+        //        .HasForeignKey(d => d.OrderId)
+        //        .HasConstraintName("FK_OrderItems_Orders");
+
+
+        //});
 
         modelBuilder.Entity<OrderItem>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__order_it__3764B6BC8F5CA1BB");
-
             entity.ToTable("order_items");
-
             entity.Property(e => e.Id).HasColumnName("order_item_id");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
-            
-            
 
-            entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
+            entity.HasOne(d => d.Order)
+                .WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.Cascade) 
                 .HasConstraintName("FK_OrderItems_Orders");
-
-           
         });
+
 
         modelBuilder.Entity<Product>(entity =>
         {
@@ -195,7 +206,12 @@ public partial class BookStoreContext : DbContext
             entity.Property(e => e.Price)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("price");
-            
+
+            entity.HasMany(e => e.Inventories)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Inventory_Products");
         });
 
         modelBuilder.Entity<Review>(entity =>

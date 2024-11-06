@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "HER4PgubpIJOWzGvnlnywkvpNd8deBPCJDnCwtE9tD8=",
+  "Hash": "VVsTLFU1wb4S3IKiG2/H0CFpIhM/2qRk+St7o7xqWlI=",
   "Source": "BookStore",
   "BasePath": "_content/BookStore",
   "Mode": "Default",
@@ -1309,12 +1309,12 @@
       "OriginalItemSpec": "wwwroot\\images\\Clean Code.jpg"
     },
     {
-      "Identity": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\IPHONE.jpg",
+      "Identity": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\Screenshot 2024-02-18 142556.png",
       "SourceId": "BookStore",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\",
       "BasePath": "_content/BookStore",
-      "RelativePath": "images/IPHONE.jpg",
+      "RelativePath": "images/Screenshot 2024-02-18 142556.png",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -1325,26 +1325,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\IPHONE.jpg"
-    },
-    {
-      "Identity": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\Khoai tây chiên size lớn.png",
-      "SourceId": "BookStore",
-      "SourceType": "Discovered",
-      "ContentRoot": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\",
-      "BasePath": "_content/BookStore",
-      "RelativePath": "images/Khoai tây chiên size lớn.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\Khoai tây chiên size lớn.png"
+      "OriginalItemSpec": "wwwroot\\images\\Screenshot 2024-02-18 142556.png"
     },
     {
       "Identity": "D:\\SEM 3\\ASP.NET\\BooksStore\\BookStore\\BookStore\\wwwroot\\images\\The Great Gatsby.jpg",
