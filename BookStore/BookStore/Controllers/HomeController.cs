@@ -63,9 +63,9 @@ namespace BookStore.Controllers
                 return Redirect("/404");
             }
 
-            // Debugging information
-            var inventoryCount = product.Inventories?.Count() ?? 0; // Get the count of inventories
-            Console.WriteLine($"Inventory Count: {inventoryCount}"); // Log or break here to check
+            
+            var inventoryCount = product.Inventories?.Count() ?? 0; 
+            Console.WriteLine($"Inventory Count: {inventoryCount}"); 
 
             return View(product);
         }

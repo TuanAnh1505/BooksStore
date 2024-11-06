@@ -15,30 +15,30 @@ namespace BookStore.Controllers
             _context = context;
         }
 
-        // GET: /Account/Register
+       
         public IActionResult Register()
         {
             return View();
         }
 
-        // POST: /Account/Register
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(User user)
         {
             if (ModelState.IsValid)
             {
-                // Kiểm tra nếu username đã tồn tại
+                
                 if (await _context.Users.AnyAsync(u => u.Username == user.Username))
                 {
                     ModelState.AddModelError("Username", "Username is already taken.");
                     return View(user);
                 }
 
-                // Gán role cho user
-                user.Role = user.Username == "admin" ? "Admin" : "User"; // Gán role Admin cho tài khoản admin
+                
+                user.Role = user.Username == "admin" ? "Admin" : "User"; 
 
-                // Hash password
+                
                 user.PasswordHash = HashPassword(user.PasswordHash);
                 user.CreatedAt = DateTime.Now;
 
@@ -51,13 +51,13 @@ namespace BookStore.Controllers
         }
 
 
-        // GET: /Account/Login
+        
         public IActionResult Login()
         {
             return View();
         }
 
-        // POST: /Account/Login
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
@@ -69,16 +69,16 @@ namespace BookStore.Controllers
             {
                 HttpContext.Session.SetString("UserId", user.Id.ToString());
                 HttpContext.Session.SetString("Username", user.Username);
-                HttpContext.Session.SetString("Role", user.Role); // Lưu role vào session
+                HttpContext.Session.SetString("Role", user.Role); 
 
-                // Điều hướng theo vai trò
+               
                 if (user.Role == "Admin")
                 {
-                    return RedirectToAction("Index", "HomeAdmin", new { area = "Admin" }); // Redirect đến Admin
+                    return RedirectToAction("Index", "HomeAdmin", new { area = "Admin" });
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Home"); // Redirect đến Home cho User
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
@@ -87,14 +87,14 @@ namespace BookStore.Controllers
         }
 
 
-        // GET: /Account/Logout
+       
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
 
-        // Helper methods to hash and verify password
+        
         private string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
